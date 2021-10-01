@@ -53,8 +53,6 @@ of that library also applies here.
 
 If you encounter any bugs or have any questions, please feel free to open an issue.
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
