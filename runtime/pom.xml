@@ -12,7 +12,13 @@
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-arc</artifactId>
+      <artifactId>quarkus-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr</groupId>
+      <artifactId>jackson-jq</artifactId>
+      <type>jar</type>
+      <version>${jackson-jq.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -29,6 +35,9 @@
             </goals>
             <configuration>
               <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
+              <capabilities>
+                <provides>io.quarkiverse.jacksonjq</provides>
+              </capabilities>
             </configuration>
           </execution>
         </executions>

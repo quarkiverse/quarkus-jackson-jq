@@ -1,4 +1,4 @@
-package io.quarkiverse.quarkus.jackson.jq.it;
+package io.quarkiverse.jackson.jq.it;
 
 import io.quarkus.test.junit.NativeImageTest;
 

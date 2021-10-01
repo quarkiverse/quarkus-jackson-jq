@@ -1,9 +1,11 @@
 name: Jackson Jq
-#description: Jackson Jq ...
+description: Provide jq expressions support to Quarkus applications
 metadata:
-#  keywords:
-#    - jackson-jq
+  keywords:
+    - jackson-jq
+    - jackson
+    - jq
 #  guide: ...
-#  categories:
-#    - "miscellaneous"
-#  status: "preview"
+  categories:
+    - "miscellaneous"
+  status: "preview"

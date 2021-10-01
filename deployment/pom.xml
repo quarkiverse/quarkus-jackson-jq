@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.quarkiverse.quarkus-jackson-jq</groupId>
@@ -12,7 +12,7 @@
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-arc-deployment</artifactId>
+      <artifactId>quarkus-jackson-deployment</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.quarkus-jackson-jq</groupId>
@@ -37,6 +37,14 @@
               <version>${quarkus.version}</version>
             </path>
           </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>16</source>
+          <target>16</target>
         </configuration>
       </plugin>
     </plugins>
