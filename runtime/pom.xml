@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.quarkiverse.quarkus-jackson-jq</groupId>
+    <groupId>io.quarkiverse.jackson-jq</groupId>
     <artifactId>quarkus-jackson-jq-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
@@ -36,7 +36,7 @@
             <configuration>
               <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
               <capabilities>
-                <provides>io.quarkiverse.jacksonjq</provides>
+                <provides>io.quarkiverse.jackson.jq</provides>
               </capabilities>
             </configuration>
           </execution>

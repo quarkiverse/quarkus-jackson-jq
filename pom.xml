@@ -7,7 +7,7 @@
     <artifactId>quarkiverse-parent</artifactId>
     <version>7</version>
   </parent>
-  <groupId>io.quarkiverse.quarkus-jackson-jq</groupId>
+  <groupId>io.quarkiverse.jackson-jq</groupId>
   <artifactId>quarkus-jackson-jq-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>

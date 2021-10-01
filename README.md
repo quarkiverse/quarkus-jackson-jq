@@ -1,23 +1,53 @@
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # Quarkus - Jackson Jq
 
-## Welcome to Quarkiverse!
+[`jq`](https://stedolan.github.io/jq/) is a very popular JSON processor.
+[Jackson JQ](https://github.com/eiiches/jackson-jq) is an implementation of this processor in Java, and now you can
+integrate it in your Quarkus application!
 
-Congratulations and thank you for creating a new Quarkus extension project in Quarkiverse!
+## Getting Started
 
-Feel free to replace this content with the proper description of your new project and necessary instructions how to use and contribute to it.
+Simply add the dependency to your Quarkus project:
 
-You can find the basic info, Quarkiverse policies and conventions in [the Quarkiverse wiki](https://github.com/quarkiverse/quarkiverse/wiki).
+```xml
 
-In case you are creating a Quarkus extension project for the first time, please follow [Building My First Extension](https://quarkus.io/guides/building-my-first-extension) guide.
+<dependency>
+  <groupId>io.quarkiverse.jackson-jq</groupId>
+  <artifactId>quarkus-jackson-jq</artifactId>
+</dependency>
+```
 
-Other useful articles related to Quarkus extension development can be found under the [Writing Extensions](https://quarkus.io/guides/#writing-extensions) guide category on the [Quarkus.io](http://quarkus.io) website.
+Then you can simply use the `jackson-jq`'s
+[`Scope`](https://github.com/eiiches/jackson-jq/blob/develop/1.x/jackson-jq/src/test/java/examples/Usage.java) bean in
+your services. For example:
 
-Thanks again, good luck and have fun!
+```java
 
-## Documentation
+@Path("/jackson-jq")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class JacksonJqResource {
 
-The documentation for this extension should be maintained as part of this repository and it is stored in the `docs/` directory. 
+    @Inject
+    Scope scope;
 
-The layout should follow the [Antora's Standard File and Directory Set](https://docs.antora.org/antora/2.3/standard-directories/).
+    @POST
+    public List<JsonNode> parse(Document document) throws JsonQueryException {
+        final JsonQuery query = JsonQuery.compile(document.expression, Versions.JQ_1_6);
+        List<JsonNode> out = new ArrayList<>();
+        query.apply(this.scope, document.document, out::add);
+        return out;
+    }
+}
+```
 
-Once the docs are ready to be published, please open a PR including this repository in the [Quarkiverse Docs Antora playbook](https://github.com/quarkiverse/quarkiverse-docs/blob/main/antora-playbook.yml#L7). See an example [here](https://github.com/quarkiverse/quarkiverse-docs/pull/1).
+## Considerations
+
+Underneath, this extension uses `jackson-jq`, so the
+same [limitations and capabilities](https://github.com/eiiches/jackson-jq#implementation-status)
+of that library also applies here.
+
+If you encounter any bugs or have any questions, please feel free to open an issue.
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
