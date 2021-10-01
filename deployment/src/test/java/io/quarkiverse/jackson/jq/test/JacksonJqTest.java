@@ -1,4 +1,4 @@
-package io.quarkiverse.quarkus.jackson.jq.test;
+package io.quarkiverse.jackson.jq.test;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

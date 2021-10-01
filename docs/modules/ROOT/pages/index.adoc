@@ -5,13 +5,13 @@ Describe what the extension does here.
 
 == Installation
 
-If you want to use this extension, you need to add the `io.quarkiverse.quarkus-jackson-jq:quarkus-jackson-jq` extension first.
+If you want to use this extension, you need to add the `io.quarkiverse.jackson-jq:quarkus-jackson-jq` extension first.
 In your `pom.xml` file, add:
 
 [source,xml]
 ----
 <dependency>
-    <groupId>io.quarkiverse.quarkus-jackson-jq</groupId>
+    <groupId>io.quarkiverse.jackson-jq</groupId>
     <artifactId>quarkus-jackson-jq</artifactId>
 </dependency>
 ----
