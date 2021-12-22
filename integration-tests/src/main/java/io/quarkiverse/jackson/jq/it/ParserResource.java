@@ -33,41 +33,20 @@ import net.thisptr.jackson.jq.Scope;
 import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.exception.JsonQueryException;
 
-@Path("/jackson-jq")
+@Path("/parser")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class JacksonJqResource {
+public class ParserResource {
 
     @Inject
     Scope scope;
 
     @POST
-    public List<JsonNode> parse(Document document) throws JsonQueryException {
-        final JsonQuery query = JsonQuery.compile(document.expression, Versions.JQ_1_6);
+    public List<JsonNode> parse(final Document document) throws JsonQueryException {
+        final JsonQuery query = JsonQuery.compile(document.getExpression(), Versions.JQ_1_6);
         List<JsonNode> out = new ArrayList<>();
-        query.apply(this.scope, document.document, out::add);
+        query.apply(this.scope, document.getDocument(), out::add);
         return out;
     }
 
-    public static class Document {
-
-        private String expression;
-        private JsonNode document;
-
-        public JsonNode getDocument() {
-            return document;
-        }
-
-        public void setDocument(JsonNode document) {
-            this.document = document;
-        }
-
-        public String getExpression() {
-            return expression;
-        }
-
-        public void setExpression(String expression) {
-            this.expression = expression;
-        }
-    }
 }
