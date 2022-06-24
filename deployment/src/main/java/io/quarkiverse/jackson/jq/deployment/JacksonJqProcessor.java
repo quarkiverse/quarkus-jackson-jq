@@ -1,30 +1,33 @@
 package io.quarkiverse.jackson.jq.deployment;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.jandex.IndexView;
+
 import io.quarkiverse.jackson.jq.JacksonJqScopeRecorder;
+import io.quarkiverse.jackson.jq.JqFunction;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
+import io.quarkus.deployment.builditem.ApplicationArchivesBuildItem;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.NativeImageResourcePatternsBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.recording.RecorderContext;
-import net.thisptr.jackson.jq.BuiltinFunctionLoader;
-import net.thisptr.jackson.jq.Function;
+import io.quarkus.runtime.RuntimeValue;
+import net.thisptr.jackson.jq.BuiltinFunction;
 import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Versions;
+
+import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctions;
+import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctionsFromConfig;
 
 class JacksonJqProcessor {
-
     private static final String FEATURE = "jackson-jq";
-    private static final String REFLECTION_VERSION_RANGE_DESERIALIZER = "net.thisptr.jackson.jq.internal.misc.VersionRangeDeserializer";
-    private static final String JSON_CONFIG_GLOB = "net/thisptr/jackson/**/*.json";
 
     @BuildStep
     FeatureBuildItem feature() {
@@ -32,28 +35,59 @@ class JacksonJqProcessor {
     }
 
     @BuildStep
-    List<ReflectiveClassBuildItem> registerForReflection() {
-        final List<ReflectiveClassBuildItem> reflectionConfig = new ArrayList<>();
-        reflectionConfig.add(ReflectiveClassBuildItem.weakClass(REFLECTION_VERSION_RANGE_DESERIALIZER));
-        return reflectionConfig;
-    }
-
-    @BuildStep
-    NativeImageResourcePatternsBuildItem includeJsonConfigFile() {
-        return NativeImageResourcePatternsBuildItem.builder().includeGlob(JSON_CONFIG_GLOB).build();
-    }
-
-    @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
-    SyntheticBeanBuildItem quarkusScopeBean(JacksonJqScopeRecorder recorder,
-            RecorderContext context) throws NoSuchMethodException {
-        // preload everything and use it as a parent scope
-        final Map<String, Function> functions = BuiltinFunctionLoader.getInstance()
-                .loadFunctionsFromServiceLoader(BuiltinFunctionLoader.class.getClassLoader(), Versions.JQ_1_6);
+    SyntheticBeanBuildItem quarkusScopeBean(
+            CombinedIndexBuildItem combinedIndex,
+            ApplicationArchivesBuildItem archives,
+            JacksonJqConfig config,
+            JacksonJqScopeRecorder recorder,
+            List<JacksonJqFunctionBuildItem> functions,
+            RecorderContext context) throws Exception {
+
+        IndexView indexView = combinedIndex.getIndex();
+        List<String> excludes = config.functions.excludes.orElseGet(Collections::emptyList);
+
+        RuntimeValue<Scope> root = recorder.createScope();
+        RuntimeValue<Scope> local = recorder.createScope(root);
+
+        // load built-in int functions
+        lookupFunctionsFromConfig(archives, config).forEach(e -> {
+            if (!excludes.contains(e.name)) {
+                recorder.addFunction(root, e.name, e.args, e.body, config.functions.version.toString());
+            }
+        });
+        lookupFunctions(indexView, config, context, BuiltinFunction.class).forEach(f -> {
+            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
+                recorder.addFunction(local, f.getName(), f.getFunction());
+            }
+        });
+        lookupFunctions(indexView, config, context, net.thisptr.jackson.jq.internal.BuiltinFunction.class).forEach(f -> {
+            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
+                recorder.addFunction(local, f.getName(), f.getFunction());
+            }
+        });
+
+        // load custom function
+        lookupFunctions(indexView, config, context, JqFunction.class).forEach(f -> {
+            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
+                recorder.addFunction(local, f.getName(), f.getFunction());
+            }
+        });
+        functions.forEach(f -> {
+            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
+                recorder.addFunction(local, f.getName(), f.getFunction());
+            }
+        });
+
         return SyntheticBeanBuildItem
                 .configure(Scope.class)
                 .scope(Singleton.class)
-                .runtimeValue(recorder.createScope(functions))
+                .runtimeValue(local)
                 .done();
+    }
+
+    @BuildStep
+    UnremovableBeanBuildItem unremovableBeans() {
+        return UnremovableBeanBuildItem.beanTypes(Scope.class);
     }
 }

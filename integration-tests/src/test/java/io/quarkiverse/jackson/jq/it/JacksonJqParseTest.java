@@ -25,7 +25,7 @@ public class JacksonJqParseTest {
         given().when()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(doc))
-                .post("/parser")
+                .post("/jq/parse")
                 .then()
                 .statusCode(200)
                 .body(is("[\"1-2-3-4-5-6\"]"));
@@ -55,7 +55,7 @@ public class JacksonJqParseTest {
         given().when()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(doc))
-                .post("/parser")
+                .post("/jq/parse")
                 .then()
                 .statusCode(200)
                 .body(is("[[{\"age\":2},{\"age\":10},{\"age\":12}]]"));
