@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>2.10.1.Final</quarkus.version>
-    <jackson-jq.version>1.0.0-preview.20210928</jackson-jq.version>
+    <jackson-jq.version>1.0.0-preview.20220705</jackson-jq.version>
   </properties>
   <dependencyManagement>
     <dependencies>
