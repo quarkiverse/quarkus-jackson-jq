@@ -1,5 +1,5 @@
 name: quarkus-jackson-jq
-title: Quarkus - Jackson Jq
+title: Quarkus Jackson Jq
 version: dev
 nav:
   - modules/ROOT/nav.adoc
