@@ -21,8 +21,11 @@ public class JacksonJqLoaderTest {
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0))
-                .body("$", not(hasItem("path/1"))) // built-in function filtered
+                .body("$", not(hasItem("min_by/1"))) // built-in function filtered
+                .body("$", hasItem("@json/0")) // built-in function from jq.config
+                .body("$", hasItem("@text/0")) // built-in function from jq.config
                 .body("$", hasItem("paths/1")) // built-in function not filtered
+                .body("$", hasItem("delpaths/1")) // built-in function not filtered
                 .body("$", hasItem("myFunction/1")) // custom function not filtered
                 .body("$", hasItem("myFunction/2")); // custom function not filtered
     }

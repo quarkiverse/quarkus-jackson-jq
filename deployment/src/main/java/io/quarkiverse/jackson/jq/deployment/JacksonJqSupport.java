@@ -52,8 +52,8 @@ final class JacksonJqSupport {
                         .collect(Collectors.joining());
 
                 mapper.readValue(functions, JqJson.class).functions.stream()
-                        .filter(f -> f.version.contains(config.functions.version))
-                        .filter(answer::add);
+                        .filter(f -> f.version == null || f.version.contains(config.functions.version))
+                        .forEach(answer::add);
             }
         }
 

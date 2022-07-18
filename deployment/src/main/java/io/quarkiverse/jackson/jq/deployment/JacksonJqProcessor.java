@@ -1,5 +1,8 @@
 package io.quarkiverse.jackson.jq.deployment;
 
+import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctions;
+import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctionsFromConfig;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -22,9 +25,6 @@ import io.quarkus.deployment.recording.RecorderContext;
 import io.quarkus.runtime.RuntimeValue;
 import net.thisptr.jackson.jq.BuiltinFunction;
 import net.thisptr.jackson.jq.Scope;
-
-import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctions;
-import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctionsFromConfig;
 
 class JacksonJqProcessor {
     private static final String FEATURE = "jackson-jq";
@@ -58,12 +58,12 @@ class JacksonJqProcessor {
         });
         lookupFunctions(indexView, config, context, BuiltinFunction.class).forEach(f -> {
             if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(local, f.getName(), f.getFunction());
+                recorder.addFunction(root, f.getName(), f.getFunction());
             }
         });
         lookupFunctions(indexView, config, context, net.thisptr.jackson.jq.internal.BuiltinFunction.class).forEach(f -> {
             if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(local, f.getName(), f.getFunction());
+                recorder.addFunction(root, f.getName(), f.getFunction());
             }
         });
 
