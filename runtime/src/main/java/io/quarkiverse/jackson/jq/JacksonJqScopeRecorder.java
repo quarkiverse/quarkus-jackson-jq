@@ -41,7 +41,8 @@ public class JacksonJqScopeRecorder {
                     scope.getValue());
 
             scope.getValue().addFunction(
-                    name + "/" + args.size(),
+                    name,
+                    args.size(),
                     function);
         } catch (Exception e) {
             throw new RuntimeException(e);
