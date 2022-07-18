@@ -45,6 +45,44 @@ public class JacksonJqResource {
 }
 ```
 
+
+## Adding Custom functions
+
+The extension support adding custom functions to the jq engine, as example, to add a function that accept one or two parameters:
+
+```java
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import io.quarkiverse.jackson.jq.JqFunction;
+
+import net.thisptr.jackson.jq.Expression;
+import net.thisptr.jackson.jq.Function;
+import net.thisptr.jackson.jq.PathOutput;
+import net.thisptr.jackson.jq.Scope;
+import net.thisptr.jackson.jq.Version;
+import net.thisptr.jackson.jq.exception.JsonQueryException;
+import net.thisptr.jackson.jq.path.Path;
+
+@JqFunction({ "myFunction/1", "myFunction/2" })
+public class MyFunction implements Function {
+    @Override
+    public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+            throws JsonQueryException {
+        
+        // add the content of your function here
+    }
+}
+```
+
+The function will then be available to any jq expression i.e.
+
+```shell
+.items[] | myFunction("foo", "bar")
+```
+
+
 ## Considerations
 
 Underneath, this extension uses `jackson-jq`, so the
