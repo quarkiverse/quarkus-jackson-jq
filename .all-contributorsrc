@@ -14,6 +14,15 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "eiiches",
+      "name": "Eiichi Sato",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230747?v=4",
+      "profile": "https://github.com/eiiches",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7,
