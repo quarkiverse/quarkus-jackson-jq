@@ -27,6 +27,14 @@ public class JacksonJqLoaderTest {
                 .body("$", hasItem("paths/1")) // built-in function not filtered
                 .body("$", hasItem("delpaths/1")) // built-in function not filtered
                 .body("$", hasItem("myFunction/1")) // custom function not filtered
-                .body("$", hasItem("myFunction/2")); // custom function not filtered
+                .body("$", hasItem("myFunction/2")) // custom function not filtered
+                .body("$", hasItem("strftime/1")) // extra function not filtered
+                .body("$", hasItem("strftime/2")) // extra function not filtered
+                .body("$", hasItem("uridecode/0")) // extra function not filtered
+                .body("$", hasItem("uriparse/0")) // extra function not filtered
+                .body("$", hasItem("strptime/1")) // extra function not filtered
+                .body("$", hasItem("strptime/2")) // extra function not filtered
+                .body("$", hasItem("timestamp/0")) // extra function not filtered
+                .body("$", hasItem("uuid4/0")); // extra function not filtered
     }
 }
