@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Quarkus - Jackson Jq
@@ -109,11 +109,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://ricardozanini.medium.com/"><img src="https://avatars.githubusercontent.com/u/1538000?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ricardo Zanini</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/commits?author=ricardozanini" title="Code">💻</a> <a href="#maintenance-ricardozanini" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/eiiches"><img src="https://avatars.githubusercontent.com/u/230747?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eiichi Sato</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/pulls?q=is%3Apr+reviewed-by%3Aeiiches" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="http://lburgazzoli.github.io"><img src="https://avatars.githubusercontent.com/u/1868933?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Luca Burgazzoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/commits?author=lburgazzoli" title="Code">💻</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://ricardozanini.medium.com/"><img src="https://avatars.githubusercontent.com/u/1538000?v=4?s=100" width="100px;" alt="Ricardo Zanini"/><br /><sub><b>Ricardo Zanini</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/commits?author=ricardozanini" title="Code">💻</a> <a href="#maintenance-ricardozanini" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/eiiches"><img src="https://avatars.githubusercontent.com/u/230747?v=4?s=100" width="100px;" alt="Eiichi Sato"/><br /><sub><b>Eiichi Sato</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/pulls?q=is%3Apr+reviewed-by%3Aeiiches" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://lburgazzoli.github.io"><img src="https://avatars.githubusercontent.com/u/1868933?v=4?s=100" width="100px;" alt="Luca Burgazzoli"/><br /><sub><b>Luca Burgazzoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/commits?author=lburgazzoli" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://majiehong.com"><img src="https://avatars.githubusercontent.com/u/1061229?v=4?s=100" width="100px;" alt="Jiehong"/><br /><sub><b>Jiehong</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-jackson-jq/commits?author=Jiehong" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
