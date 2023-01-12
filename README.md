@@ -14,7 +14,6 @@ integrate it in your Quarkus application!
 Simply add the dependency to your Quarkus project:
 
 ```xml
-
 <dependency>
   <groupId>io.quarkiverse.jackson-jq</groupId>
   <artifactId>quarkus-jackson-jq</artifactId>
@@ -45,6 +44,17 @@ public class JacksonJqResource {
 }
 ```
 
+## Jackson Jq Extra Module
+
+You can also make use of the [extra module](https://github.com/eiiches/jackson-jq#using-jackson-jqextras-module) by
+adding the following dependency:
+
+```xml
+<dependency>
+  <groupId>io.quarkiverse.jackson-jq</groupId>
+  <artifactId>quarkus-jackson-jq-extra</artifactId>
+</dependency>
+```
 
 ## Adding Custom functions
 
