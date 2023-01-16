@@ -30,8 +30,8 @@ public class JacksonJqInvokeTest {
                 .body("$", hasItem("delpaths/1"));
 
         final ObjectNode node = MAPPER.createObjectNode();
-        node.with("commit").put("name", "Nicolas Williams");
-        node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+        node.withObject("/commit").put("name", "Nicolas Williams");
+        node.withObject("/commit").put("message", "Reject all overlong UTF8 sequences.");
 
         final Document doc = new Document();
         doc.setDocument(node);
