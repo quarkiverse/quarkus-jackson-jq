@@ -41,6 +41,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "hbelmiro",
+      "name": "Helber Belmiro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11776454?v=4",
+      "profile": "http://thegreatapi.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
