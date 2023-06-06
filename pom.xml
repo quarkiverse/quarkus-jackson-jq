@@ -17,7 +17,7 @@
     <module>runtime-extra</module>
   </modules>
   <scm>
-    <connection>:git:git@github.com:quarkiverse/quarkus-jackson-jq.git</connection>
+    <connection>scm:git:git@github.com:quarkiverse/quarkus-jackson-jq.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-jackson-jq.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-jackson-jq</url>
   </scm>
