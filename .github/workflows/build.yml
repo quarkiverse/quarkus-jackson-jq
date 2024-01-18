@@ -31,12 +31,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: '22.2.0'
-          java-version: '11'
+          java-version: '17'
+          distribution: 'graalvm'
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
