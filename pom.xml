@@ -8,7 +8,7 @@
   </parent>
   <groupId>io.quarkiverse.jackson-jq</groupId>
   <artifactId>quarkus-jackson-jq-parent</artifactId>
-  <version>2.0.2</version>
+  <version>999-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Quarkus - Jackson Jq - Parent</name>
   <modules>
@@ -20,7 +20,7 @@
     <connection>scm:git:git@github.com:quarkiverse/quarkus-jackson-jq.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-jackson-jq.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-jackson-jq</url>
-    <tag>2.0.2</tag>
+    <tag>HEAD</tag>
   </scm>
   <properties>
     <compiler-plugin.version>3.10.1</compiler-plugin.version>
