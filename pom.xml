@@ -29,7 +29,7 @@
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>3.8.2</quarkus.version>
+    <quarkus.version>3.8.3</quarkus.version>
     <jackson-jq.version>1.0.0-preview.20240207</jackson-jq.version>
   </properties>
   <dependencyManagement>
