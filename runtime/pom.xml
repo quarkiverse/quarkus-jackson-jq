@@ -19,6 +19,12 @@
       <type>jar</type>
       <version>${jackson-jq.version}</version>
     </dependency>
+    <dependency>
+      <groupId>net.thisptr</groupId>
+      <artifactId>jackson-jq-extra</artifactId>
+      <type>jar</type>
+      <version>${jackson-jq.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
