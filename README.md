@@ -48,15 +48,7 @@ public class JacksonJqResource {
 
 ## Jackson Jq Extra Module
 
-You can also make use of the [extra module](https://github.com/eiiches/jackson-jq#using-jackson-jqextras-module) by
-adding the following dependency:
-
-```xml
-<dependency>
-  <groupId>io.quarkiverse.jackson-jq</groupId>
-  <artifactId>quarkus-jackson-jq-extra</artifactId>
-</dependency>
-```
+By default, this extension already includes the [extra module](https://github.com/eiiches/jackson-jq#using-jackson-jqextras-module).
 
 ## Adding Custom functions
 
