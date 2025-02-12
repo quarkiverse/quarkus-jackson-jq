@@ -4,35 +4,34 @@ import java.util.List;
 import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithConverter;
+import io.smallrye.config.WithDefault;
 import net.thisptr.jackson.jq.Version;
 
-@ConfigRoot(name = JacksonJqConfig.CONFIG_PREFIX, phase = ConfigPhase.BUILD_TIME)
-public class JacksonJqConfig {
-    static final String CONFIG_PREFIX = "jackson.jq";
+@ConfigRoot(phase = ConfigPhase.BUILD_TIME)
+@ConfigMapping(prefix = "quarkus.jackson.jq")
+public interface JacksonJqConfig {
 
     /**
      * Configure function related config
      */
-    @ConfigItem
-    public FunctionsConfig functions;
+    FunctionsConfig functions();
 
     @ConfigGroup
-    public static class FunctionsConfig {
+    public interface FunctionsConfig {
         /**
          * The supported jq version
          */
-        @ConfigItem(defaultValue = "1.6")
+        @WithDefault("1.6")
         @WithConverter(JacksonJqVersionConverter.class)
-        public Version version;
+        Version version();
 
         /**
          * List of functions to exclude
          */
-        @ConfigItem
-        public Optional<List<String>> excludes;
+        Optional<List<String>> excludes();
     }
 }

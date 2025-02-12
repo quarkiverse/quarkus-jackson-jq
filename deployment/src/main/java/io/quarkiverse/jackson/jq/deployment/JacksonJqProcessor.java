@@ -45,7 +45,7 @@ class JacksonJqProcessor {
             RecorderContext context) throws Exception {
 
         IndexView indexView = combinedIndex.getIndex();
-        List<String> excludes = config.functions.excludes.orElseGet(Collections::emptyList);
+        List<String> excludes = config.functions().excludes().orElseGet(Collections::emptyList);
 
         RuntimeValue<Scope> root = recorder.createScope();
         RuntimeValue<Scope> local = recorder.createScope(root);
@@ -53,7 +53,7 @@ class JacksonJqProcessor {
         // load built-in int functions
         lookupFunctionsFromConfig(archives, config).forEach(e -> {
             if (!excludes.contains(e.name)) {
-                recorder.addFunction(root, e.name, e.args, e.body, config.functions.version.toString());
+                recorder.addFunction(root, e.name, e.args, e.body, config.functions().version().toString());
             }
         });
         lookupFunctions(indexView, config, context, BuiltinFunction.class).forEach(f -> {
