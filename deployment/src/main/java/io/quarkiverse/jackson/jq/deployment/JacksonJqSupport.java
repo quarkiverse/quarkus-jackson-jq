@@ -52,7 +52,7 @@ final class JacksonJqSupport {
                         .collect(Collectors.joining());
 
                 mapper.readValue(functions, JqJson.class).functions.stream()
-                        .filter(f -> f.version == null || f.version.contains(config.functions.version))
+                        .filter(f -> f.version == null || f.version.contains(config.functions().version()))
                         .forEach(answer::add);
             }
         }
@@ -87,7 +87,7 @@ final class JacksonJqSupport {
                         context.newInstance(ci.name().toString()));
 
                 if (version != null && !version.asString().isEmpty()) {
-                    if (!VersionRange.valueOf(version.asString()).contains(config.functions.version)) {
+                    if (!VersionRange.valueOf(version.asString()).contains(config.functions().version())) {
                         continue;
                     }
                 }
