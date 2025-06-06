@@ -21,6 +21,7 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.ApplicationArchivesBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.recording.RecorderContext;
 import io.quarkus.runtime.RuntimeValue;
 import net.thisptr.jackson.jq.BuiltinFunction;
@@ -28,10 +29,30 @@ import net.thisptr.jackson.jq.Scope;
 
 class JacksonJqProcessor {
     private static final String FEATURE = "jackson-jq";
+    private static final String JACKSON_JQ_GROUP_ID = "net.thisptr";
+    private static final String JACKSON_JQ_ARTIFACT_ID = "jackson-jq";
+    private static final String JACKSON_JQ_EXTRA_ARTIFACT_ID = "jackson-jq-extra";
 
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
+    }
+
+    /**
+     * Ensure Quarkus indexes net.thisptr:jackson-jq at build time.
+     * This avoids “Reindexing … index version is 10” warnings.
+     */
+    @BuildStep
+    IndexDependencyBuildItem indexJacksonJq() {
+        return new IndexDependencyBuildItem(JACKSON_JQ_GROUP_ID, JACKSON_JQ_ARTIFACT_ID);
+    }
+
+    /**
+     * Likewise, index jackson-jq-extra.
+     */
+    @BuildStep
+    IndexDependencyBuildItem indexJacksonJqExtra() {
+        return new IndexDependencyBuildItem(JACKSON_JQ_GROUP_ID, JACKSON_JQ_EXTRA_ARTIFACT_ID);
     }
 
     @BuildStep
@@ -61,7 +82,7 @@ class JacksonJqProcessor {
                 recorder.addFunction(root, f.getName(), f.getFunction());
             }
         });
-        lookupFunctions(indexView, config, context, net.thisptr.jackson.jq.internal.BuiltinFunction.class).forEach(f -> {
+        lookupFunctions(indexView, config, context, net.thisptr.jackson.jq.BuiltinFunction.class).forEach(f -> {
             if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
                 recorder.addFunction(root, f.getName(), f.getFunction());
             }

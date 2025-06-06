@@ -72,7 +72,7 @@ final class JacksonJqSupport {
         DotName f = DotName.createSimple(Function.class.getName());
         DotName a = DotName.createSimple(annotationType.getName());
 
-        for (ClassInfo ci : indexView.getAllKnownImplementors(f)) {
+        for (ClassInfo ci : indexView.getAllKnownImplementations(f)) {
             AnnotationInstance annotation = ci.declaredAnnotation(a);
             if (annotation == null) {
                 continue;
