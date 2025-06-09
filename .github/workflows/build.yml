@@ -41,17 +41,6 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Get Date for cache key
-        id: get-date
-        run: echo "::set-output name=date::$(date -u '+%Y-%m')"
-        shell: bash
-
-      - name: Cache Maven Repository
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.OS }}-${{ steps.get-date.outputs.date }}
-
       - name: Maven formatter validate + JVM verify
         run: mvn -B formatter:validate verify --file pom.xml
 
@@ -72,17 +61,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-
-      - name: Get Date for cache key
-        id: get-date-native
-        run: echo "::set-output name=date::$(date -u '+%Y-%m')"
-        shell: bash
-
-      - name: Cache Maven Repository
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.OS }}-native-${{ steps.get-date-native.outputs.date }}
 
       - name: Maven formatter validate + Native verify
         # This will use <quarkus.native.container-build>true</quarkus.native.container-build>
