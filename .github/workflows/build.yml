@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - "main"
+      - main
     paths-ignore:
       - '.gitignore'
       - 'CODEOWNERS'
@@ -23,35 +23,52 @@ on:
       - '.all-contributorsrc'
 
 jobs:
-  build:
-
+  # ----------------------------------------------------------------------------
+  # 1) JVM build + tests under Java 17
+  # ----------------------------------------------------------------------------
+  build-jvm:
+    name: JVM Build & Tests (Java 17)
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-          components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
 
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y-%m")"
-        shell: bash
-      - name: Cache Maven Repository
-        id: cache-maven
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          # refresh cache every month to avoid unlimited growth
-          key: maven-repo-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+      - name: Maven formatter validate + JVM verify
+        run: mvn -B formatter:validate verify --file pom.xml
 
-      - name: Build and Run Native with Maven
+  # ----------------------------------------------------------------------------
+  # 2) Native build + integration‐tests (Java 21 + container)
+  # ----------------------------------------------------------------------------
+  build-native:
+    name: Native Build & Tests (Mandrel JDK 21 in container)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Maven formatter validate + Native verify
+        # This will use <quarkus.native.container-build>true</quarkus.native.container-build>
+        # and <quarkus.native.builder-image>…jdk-21</…> as defined in the IT POM,
+        # so Quarkus spins up a Mandrel JDK21 container to produce the Linux binary,
+        # and then runs the integration tests against that native runner.
         run: mvn -B formatter:validate verify --file pom.xml -Pnative
+
+      - name: Cleanup Native Runner
+        if: always()
+        run: rm -f target/*-runner
