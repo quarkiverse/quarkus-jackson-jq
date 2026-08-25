@@ -11,8 +11,9 @@
 
   <properties>
     <quarkus.native.container-build>true</quarkus.native.container-build>
-    <!-- Using JDK 21 for the native builds checks since Netty has a bug on JDK 17: https://github.com/quarkusio/quarkus/issues/39819 -->
-    <quarkus.native.builder-image>quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21</quarkus.native.builder-image>
+    <!-- Mandrel's jdk-21 line is capped at 23.1.x (GraalVM 23), but Quarkus 3.38+ requires
+         GraalVM/Mandrel 25.0+ for native builds, which Mandrel only ships on JDK 25. -->
+    <quarkus.native.builder-image>quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-25</quarkus.native.builder-image>
   </properties>
 
   <dependencies>
