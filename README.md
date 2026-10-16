@@ -9,7 +9,7 @@
 [Jackson JQ](https://github.com/eiiches/jackson-jq) is an implementation of this processor in Java, and now you can
 integrate it in your Quarkus application!
 
-> **⚠️** Version 2.x.x of this extension (`main` branch) supports Quarkus 3, and version 1.x.x (`quarkus2` branch) supports Quarkus 2.
+> **⚠️** Version 2.x.x of this extension (`main` branch) supports Quarkus 4 and Jackson Jq 2.x.x.
 
 ## Getting Started
 
@@ -23,32 +23,44 @@ Simply add the dependency to your Quarkus project:
 ```
 
 Then you can simply use the `jackson-jq`'s
-[`Scope`](https://github.com/eiiches/jackson-jq/blob/develop/1.x/jackson-jq/src/test/java/examples/Usage.java) bean in
+[`Environment`](https://github.com/eiiches/jackson-jq/blob/develop/2.x/examples/MinimalTest.java) bean in
 your services. For example:
 
 ```java
-
 @Path("/jackson-jq")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class JacksonJqResource {
 
     @Inject
-    Scope scope;
+    Environment<JsonNode> environment;
 
     @POST
     public List<JsonNode> parse(Document document) throws JsonQueryException {
-        final JsonQuery query = JsonQuery.compile(document.expression, Versions.JQ_1_6);
+        final JsonQuery query = environment.compile(document.expression);
         List<JsonNode> out = new ArrayList<>();
-        query.apply(this.scope, document.document, out::add);
+        query.apply(document.document, out::add);
         return out;
     }
 }
 ```
 
-## Jackson Jq Extra Module
+## Jackson Jq Extra Modules
 
-By default, this extension already includes the [extra module](https://github.com/eiiches/jackson-jq#using-jackson-jqextras-module).
+By default, this extension already includes the following extra modules, so there is no need to add them to your project:
+
+- `jackson-jq-ext-module-uuid`
+- `jackson-jq-ext-module-time`
+- `jackson-jq-ext-module-uri`
+
+You can find more information on additional modules in: [extra module](https://github.com/eiiches/jackson-jq/blob/develop/2.x/docs/modules/README.md).
+
+## Configuration
+
+| Property                                | Default | Description                                                                     |
+|-----------------------------------------|---------|---------------------------------------------------------------------------------|
+| `quarkus.jackson.jq.functions.version`  | `1.8.2` | The supported jq version.                                                       |
+| `quarkus.jackson.jq.functions.excludes` |         | **Deprecated**, it has no effect anymore and will be removed in a future release. |
 
 ## Adding Custom functions
 
@@ -56,36 +68,82 @@ The extension support adding custom functions to the jq engine, as example, to a
 
 ```java
 import java.util.List;
+import java.util.Locale;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import net.thisptr.jackson.jq.v2.json.JsonProvider;
+import net.thisptr.jackson.jq.v2.spi.BindContext;
+import net.thisptr.jackson.jq.v2.spi.Expression;
+import net.thisptr.jackson.jq.v2.spi.Function;
+import net.thisptr.jackson.jq.v2.spi.RuntimeContext;
+import net.thisptr.jackson.jq.v2.spi.annotations.FunctionRegistration;
+import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
+import net.thisptr.jackson.jq.v2.spi.path.UntrackedPath;
 
-import io.quarkiverse.jackson.jq.JqFunction;
+/**
+ * Greets a name in a given language.
+ * <ul>
+ * <li>{@code myGreet(name)} greets in English.</li>
+ * <li>{@code myGreet(lang; name)} greets in the given language: "EN", "ES", or "IT". Unknown languages are
+ * treated as "EN".</li>
+ * </ul>
+ */
+@FunctionRegistration(name = "myGreet", nargs = 1)
+@FunctionRegistration(name = "myGreet", nargs = 2)
+public class MyGreetFunction implements Function {
 
-import net.thisptr.jackson.jq.Expression;
-import net.thisptr.jackson.jq.Function;
-import net.thisptr.jackson.jq.PathOutput;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Version;
-import net.thisptr.jackson.jq.exception.JsonQueryException;
-import net.thisptr.jackson.jq.path.Path;
-
-@JqFunction({ "myFunction/1", "myFunction/2" })
-public class MyFunction implements Function {
     @Override
-    public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
-            throws JsonQueryException {
-        
-        // add the content of your function here
+    public <Context extends RuntimeContext, JsonNode> Expression<Context, JsonNode> bind(BindContext<JsonNode> bindCtx,
+                                                                                         List<Expression<Context, JsonNode>> args) throws JsonQueryException {
+        JsonProvider<JsonNode> json = bindCtx.getJsonProvider();
+
+        return (ctx, in, ipath, output) -> {
+            if (args.size() == 1) {
+                args.get(0).apply(ctx, in, UntrackedPath.getInstance(),
+                        (name, p) -> output.emit(greet(json, "EN", name), UntrackedPath.getInstance()));
+            } else {
+                args.get(0).apply(ctx, in, UntrackedPath.getInstance(),
+                        (lang, p1) -> args.get(1).apply(ctx, in, UntrackedPath.getInstance(),
+                                (name, p2) -> output.emit(greet(json, text(json, lang), name), UntrackedPath.getInstance())));
+            }
+        };
+    }
+
+    private static <JsonNode> JsonNode greet(JsonProvider<JsonNode> json, String lang, JsonNode name) {
+        final String greeting = switch (lang.toUpperCase(Locale.ROOT)) {
+            case "ES" -> "Hola";
+            case "IT" -> "Ciao";
+            default -> "Hello"; // "EN" and any unknown language
+        };
+        return json.createString(greeting + ", " + text(json, name) + "!");
+    }
+
+    // strings are used as-is, anything else is rendered as JSON
+    private static <JsonNode> String text(JsonProvider<JsonNode> json, JsonNode value) {
+        return json.isString(value) ? json.getString(value) : json.format(value);
     }
 }
 ```
 
+You must add the following ServiceLoader configuration file to your project referring the given function.
+
+````
+src/main/resources/META-INF/services/net.thisptr.jackson.jq.v2.spi.Function
+````
+and configure the given function implementation class.
+````
+io.quarkiverse.jackson.jq.it.MyGreetFunction
+````
+
 The function will then be available to any jq expression i.e.
 
 ```shell
-.items[] | myFunction("foo", "bar")
+.items[] | myGreet("EN"; "Bob")
 ```
 
+## Migrating from 1.x
+
+Custom functions annotated with `@JqFunction` must be migrated to `@FunctionRegistration`.
+See the `myGreet` function in the [Adding Custom functions](#adding-custom-functions) section for an example of the new style.
 
 ## Considerations
 

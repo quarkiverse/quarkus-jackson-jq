@@ -1,114 +1,64 @@
 package io.quarkiverse.jackson.jq.deployment;
 
-import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctions;
-import static io.quarkiverse.jackson.jq.deployment.JacksonJqSupport.lookupFunctionsFromConfig;
-
-import java.util.Collections;
-import java.util.List;
-
 import jakarta.inject.Singleton;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.jandex.IndexView;
+import org.jboss.jandex.ClassType;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.ParameterizedType;
+import org.jboss.jandex.Type;
 
-import io.quarkiverse.jackson.jq.JacksonJqScopeRecorder;
-import io.quarkiverse.jackson.jq.JqFunction;
+import io.quarkiverse.jackson.jq.JacksonJqEnvironmentRecorder;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
+import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
-import io.quarkus.deployment.builditem.ApplicationArchivesBuildItem;
-import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
-import io.quarkus.deployment.recording.RecorderContext;
+import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.runtime.RuntimeValue;
-import net.thisptr.jackson.jq.BuiltinFunction;
-import net.thisptr.jackson.jq.Scope;
+import net.thisptr.jackson.jq.v2.core.Environment;
+import net.thisptr.jackson.jq.v2.spi.Function;
+import net.thisptr.jackson.jq.v2.spi.JqLibrary;
+import tools.jackson.databind.JsonNode;
 
 class JacksonJqProcessor {
     private static final String FEATURE = "jackson-jq";
-    private static final String JACKSON_JQ_GROUP_ID = "net.thisptr";
-    private static final String JACKSON_JQ_ARTIFACT_ID = "jackson-jq";
-    private static final String JACKSON_JQ_EXTRA_ARTIFACT_ID = "jackson-jq-extra";
 
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
     }
 
-    /**
-     * Ensure Quarkus indexes net.thisptr:jackson-jq at build time.
-     * This avoids “Reindexing … index version is 10” warnings.
-     */
-    @BuildStep
-    IndexDependencyBuildItem indexJacksonJq() {
-        return new IndexDependencyBuildItem(JACKSON_JQ_GROUP_ID, JACKSON_JQ_ARTIFACT_ID);
-    }
-
-    /**
-     * Likewise, index jackson-jq-extra.
-     */
-    @BuildStep
-    IndexDependencyBuildItem indexJacksonJqExtra() {
-        return new IndexDependencyBuildItem(JACKSON_JQ_GROUP_ID, JACKSON_JQ_EXTRA_ARTIFACT_ID);
-    }
-
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
-    SyntheticBeanBuildItem quarkusScopeBean(
-            CombinedIndexBuildItem combinedIndex,
-            ApplicationArchivesBuildItem archives,
+    SyntheticBeanBuildItem quarkusEnvironmentBean(
             JacksonJqConfig config,
-            JacksonJqScopeRecorder recorder,
-            List<JacksonJqFunctionBuildItem> functions,
-            RecorderContext context) throws Exception {
-
-        IndexView indexView = combinedIndex.getIndex();
-        List<String> excludes = config.functions().excludes().orElseGet(Collections::emptyList);
-
-        RuntimeValue<Scope> root = recorder.createScope();
-        RuntimeValue<Scope> local = recorder.createScope(root);
-
-        // load built-in int functions
-        lookupFunctionsFromConfig(archives, config).forEach(e -> {
-            if (!excludes.contains(e.name)) {
-                recorder.addFunction(root, e.name, e.args, e.body, config.functions().version().toString());
-            }
-        });
-        lookupFunctions(indexView, config, context, BuiltinFunction.class).forEach(f -> {
-            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(root, f.getName(), f.getFunction());
-            }
-        });
-        lookupFunctions(indexView, config, context, net.thisptr.jackson.jq.BuiltinFunction.class).forEach(f -> {
-            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(root, f.getName(), f.getFunction());
-            }
-        });
-
-        // load custom function
-        lookupFunctions(indexView, config, context, JqFunction.class).forEach(f -> {
-            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(local, f.getName(), f.getFunction());
-            }
-        });
-        functions.forEach(f -> {
-            if (!excludes.contains(StringUtils.substringBefore(f.getName(), '/'))) {
-                recorder.addFunction(local, f.getName(), f.getFunction());
-            }
-        });
+            JacksonJqEnvironmentRecorder recorder) {
+        RuntimeValue<Environment<JsonNode>> environment = recorder.createEnvironment(config.functions().version().toString());
+        DotName envDotName = DotName.createSimple(Environment.class.getName());
+        DotName jsonNodeDotName = DotName.createSimple(JsonNode.class.getName());
+        Type jsonNodeType = ClassType.create(jsonNodeDotName, Type.Kind.CLASS);
+        ParameterizedType envType = ParameterizedType.create(envDotName, new Type[] { jsonNodeType }, null);
 
         return SyntheticBeanBuildItem
-                .configure(Scope.class)
+                .configure(envDotName)
+                .addType(envType)
                 .scope(Singleton.class)
-                .runtimeValue(local)
+                .runtimeValue(environment)
                 .done();
     }
 
     @BuildStep
     UnremovableBeanBuildItem unremovableBeans() {
-        return UnremovableBeanBuildItem.beanTypes(Scope.class);
+        return UnremovableBeanBuildItem.beanTypes(Environment.class);
+    }
+
+    @BuildStep
+    void registerModulesForNative(BuildProducer<ServiceProviderBuildItem> serviceProviders) {
+        serviceProviders.produce(ServiceProviderBuildItem.allProvidersFromClassPath(Function.class.getName()));
+        serviceProviders.produce(ServiceProviderBuildItem.allProvidersFromClassPath(JqLibrary.class.getName()));
+        serviceProviders.produce(ServiceProviderBuildItem
+                .allProvidersFromClassPath(net.thisptr.jackson.jq.v2.spi.module.Module.class.getName()));
     }
 }

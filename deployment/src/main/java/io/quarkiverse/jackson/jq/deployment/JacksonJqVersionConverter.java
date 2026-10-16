@@ -3,7 +3,7 @@ package io.quarkiverse.jackson.jq.deployment;
 import org.eclipse.microprofile.config.spi.Converter;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import net.thisptr.jackson.jq.Version;
+import net.thisptr.jackson.jq.v2.spi.version.Version;
 
 @RegisterForReflection
 public class JacksonJqVersionConverter implements Converter<Version> {
