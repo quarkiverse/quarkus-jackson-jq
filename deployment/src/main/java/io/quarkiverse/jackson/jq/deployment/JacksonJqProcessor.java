@@ -20,6 +20,7 @@ import io.quarkus.runtime.RuntimeValue;
 import net.thisptr.jackson.jq.v2.core.Environment;
 import net.thisptr.jackson.jq.v2.spi.Function;
 import net.thisptr.jackson.jq.v2.spi.JqLibrary;
+import net.thisptr.jackson.jq.v2.spi.module.Module;
 import tools.jackson.databind.JsonNode;
 
 class JacksonJqProcessor {
@@ -59,6 +60,6 @@ class JacksonJqProcessor {
         serviceProviders.produce(ServiceProviderBuildItem.allProvidersFromClassPath(Function.class.getName()));
         serviceProviders.produce(ServiceProviderBuildItem.allProvidersFromClassPath(JqLibrary.class.getName()));
         serviceProviders.produce(ServiceProviderBuildItem
-                .allProvidersFromClassPath(net.thisptr.jackson.jq.v2.spi.module.Module.class.getName()));
+                .allProvidersFromClassPath(Module.class.getName()));
     }
 }
