@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.quarkiverse</groupId>
     <artifactId>quarkiverse-parent</artifactId>
-    <version>25</version>
+    <version>26</version>
   </parent>
   <groupId>io.quarkiverse.jackson-jq</groupId>
   <artifactId>quarkus-jackson-jq-parent</artifactId>
@@ -24,12 +24,13 @@
   <properties>
     <compiler-plugin.version>3.16.0</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>3.40.1.1</quarkus.version>
-    <jackson-jq.version>1.6.5</jackson-jq.version>
+    <quarkus.version>4.0.0.Beta1</quarkus.version>
+    <jackson-jq.version>2.0.0-alpha2</jackson-jq.version>
+    <org.assertj.version>3.27.7</org.assertj.version>
   </properties>
   <dependencyManagement>
     <dependencies>

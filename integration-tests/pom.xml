@@ -26,6 +26,15 @@
       <artifactId>quarkus-jackson-jq</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- Example of adding jackson-jq extension modules to the project -->
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-regex-impl-joni</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+
+    <!-- Testing dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -36,12 +45,19 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${org.assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
+        <extensions>true</extensions>
         <executions>
           <execution>
             <goals>

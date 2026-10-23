@@ -18,8 +18,6 @@ package io.quarkiverse.jackson.jq.it;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -29,14 +27,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.jspecify.annotations.NonNull;
 
-import net.thisptr.jackson.jq.JsonQuery;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Versions;
-import net.thisptr.jackson.jq.exception.JsonQueryException;
+import net.thisptr.jackson.jq.v2.core.Environment;
+import net.thisptr.jackson.jq.v2.core.JsonQuery;
+import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
 
 @Path("/jq")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,34 +42,59 @@ import net.thisptr.jackson.jq.exception.JsonQueryException;
 public class ParserResource {
 
     @Inject
-    Scope scope;
+    Environment<JsonNode> environment;
     @Inject
     ObjectMapper mapper;
 
     @Path("/parse")
     @POST
     public List<JsonNode> parse(final Document document) throws JsonQueryException {
-        final JsonQuery query = JsonQuery.compile(document.getExpression(), Versions.JQ_1_6);
+        final JsonQuery<JsonNode> query = environment.compile(document.getExpression());
         List<JsonNode> out = new ArrayList<>();
-        query.apply(this.scope, document.getDocument(), out::add);
+        query.apply(document.getDocument(), out::add);
         return out;
+    }
+
+    @Path("/jqfunctions")
+    @GET
+    public ArrayNode jqFunctions() {
+        List<String> functions = collectJqFunctions();
+        ArrayNode answer = mapper.createArrayNode();
+        functions.forEach(answer::add);
+        return answer;
     }
 
     @Path("/functions")
     @GET
     public ArrayNode functions() {
-        Set<String> functions = new TreeSet<>();
-        Scope s = this.scope;
-
-        while (s != null) {
-            functions.addAll(s.getLocalFunctions().keySet());
-            s = s.getParentScope();
-        }
-
+        List<String> functions = collectFunctions();
         ArrayNode answer = mapper.createArrayNode();
         functions.forEach(answer::add);
-
         return answer;
     }
 
+    @Path("/allfunctions")
+    @GET
+    public ArrayNode allFunctions() {
+        List<String> allFunctions = new ArrayList<>(collectJqFunctions());
+        allFunctions.addAll(collectFunctions());
+        allFunctions = allFunctions.stream().sorted().toList();
+        ArrayNode answer = mapper.createArrayNode();
+        allFunctions.forEach(answer::add);
+        return answer;
+    }
+
+    private @NonNull List<String> collectJqFunctions() {
+        return environment.getFunctionLoaders().stream()
+                .flatMap(functionLoader -> functionLoader.getJqFunctions(environment.getJqVersion()).entrySet().stream())
+                .map(entry -> entry.getKey().name() + "/" + entry.getKey().arity())
+                .sorted().toList();
+    }
+
+    private @NonNull List<String> collectFunctions() {
+        return environment.getFunctionLoaders().stream()
+                .flatMap(functionLoader -> functionLoader.getFunctions(environment.getJqVersion()).entrySet().stream())
+                .map(entry -> entry.getKey().name() + "/" + entry.getKey().arity())
+                .sorted().toList();
+    }
 }
