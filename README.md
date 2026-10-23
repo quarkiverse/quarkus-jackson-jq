@@ -9,7 +9,7 @@
 [Jackson JQ](https://github.com/eiiches/jackson-jq) is an implementation of this processor in Java, and now you can
 integrate it in your Quarkus application!
 
-> **⚠️** Version 2.x.x of this extension (`main` branch) supports Quarkus 4 and Jackson Jq 2.x.x.
+> **⚠️** Version 3.x.x of this extension (`main` branch) supports Quarkus 4 and Jackson Jq 2.x.x.
 
 ## Getting Started
 
