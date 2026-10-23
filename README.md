@@ -140,7 +140,7 @@ The function will then be available to any jq expression i.e.
 .items[] | myGreet("EN"; "Bob")
 ```
 
-## Migrating from 1.x
+## Migrating from 2.x
 
 Custom functions annotated with `@JqFunction` must be migrated to `@FunctionRegistration`.
 See the `myGreet` function in the [Adding Custom functions](#adding-custom-functions) section for an example of the new style.
