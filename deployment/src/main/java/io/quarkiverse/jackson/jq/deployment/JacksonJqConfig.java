@@ -32,7 +32,6 @@ public interface JacksonJqConfig {
         /**
          * List of functions to exclude
          */
-        @Deprecated
         Optional<List<String>> excludes();
     }
 }
