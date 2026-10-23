@@ -11,18 +11,39 @@
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-arc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jackson</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.thisptr</groupId>
-      <artifactId>jackson-jq</artifactId>
-      <type>jar</type>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-core</artifactId>
       <version>${jackson-jq.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.thisptr</groupId>
-      <artifactId>jackson-jq-extra</artifactId>
-      <type>jar</type>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-json-provider-impl-jackson3</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-ext-module-uuid</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-ext-module-time</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-ext-module-uri</artifactId>
       <version>${jackson-jq.version}</version>
     </dependency>
   </dependencies>
@@ -49,6 +70,9 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+        <execution>
+        <id>default-compile</id>
         <configuration>
           <annotationProcessorPaths>
             <path>
@@ -58,6 +82,8 @@
             </path>
           </annotationProcessorPaths>
         </configuration>
+        </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

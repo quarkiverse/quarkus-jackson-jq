@@ -5,17 +5,15 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import tools.jackson.databind.ObjectMapper;
 
 @QuarkusTest
-public class JacksonJqParseTest {
+class JacksonJqParseTest {
 
     @Test
-    public void basicParseTest() throws JsonProcessingException {
+    public void basicParseTest() {
         final ObjectMapper objectMapper = new ObjectMapper();
         final Document doc = new Document();
         // join this array
@@ -33,7 +31,7 @@ public class JacksonJqParseTest {
 
     // see https://github.com/quarkiverse/quarkus-jackson-jq/issues/14
     @Test
-    public void sortByTest() throws JsonProcessingException {
+    public void sortByTest() {
         final ObjectMapper objectMapper = new ObjectMapper();
         final Document doc = new Document();
         // join this array

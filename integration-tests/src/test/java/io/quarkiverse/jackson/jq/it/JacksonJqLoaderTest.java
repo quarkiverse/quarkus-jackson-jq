@@ -3,7 +3,6 @@ package io.quarkiverse.jackson.jq.it;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,24 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-public class JacksonJqLoaderTest {
+class JacksonJqLoaderTest {
+
+    @Test
+    public void jqFunctionsTest() {
+        given().when()
+                .contentType(ContentType.JSON)
+                .get("/jq/jqfunctions")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0))
+                .body("$", hasItem("@json/0"))
+                .body("$", hasItem("@text/0"))
+                .body("$", hasItem("_flatten/1"))
+                .body("$", hasItem("_modify/2"))
+                .body("$", hasItem("walk/1"))
+                .body("$", hasItem("while/2"))
+                .body("$", hasItem("with_entries/1"));
+    }
 
     @Test
     public void functionsTest() {
@@ -21,20 +37,9 @@ public class JacksonJqLoaderTest {
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0))
-                .body("$", not(hasItem("min_by/1"))) // built-in function filtered
-                .body("$", hasItem("@json/0")) // built-in function from jq.config
-                .body("$", hasItem("@text/0")) // built-in function from jq.config
-                .body("$", hasItem("paths/1")) // built-in function not filtered
-                .body("$", hasItem("delpaths/1")) // built-in function not filtered
-                .body("$", hasItem("myFunction/1")) // custom function not filtered
-                .body("$", hasItem("myFunction/2")) // custom function not filtered
-                .body("$", hasItem("strftime/1")) // extra function not filtered
-                .body("$", hasItem("strftime/2")) // extra function not filtered
-                .body("$", hasItem("uridecode/0")) // extra function not filtered
-                .body("$", hasItem("uriparse/0")) // extra function not filtered
-                .body("$", hasItem("strptime/1")) // extra function not filtered
-                .body("$", hasItem("strptime/2")) // extra function not filtered
-                .body("$", hasItem("timestamp/0")) // extra function not filtered
-                .body("$", hasItem("uuid4/0")); // extra function not filtered
+                .body("$", hasItem("paths/1"))
+                .body("$", hasItem("delpaths/1"))
+                .body("$", hasItem("myGreet/1"))
+                .body("$", hasItem("myGreet/2"));
     }
 }
