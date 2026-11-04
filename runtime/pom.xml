@@ -31,6 +31,8 @@
       <artifactId>jackson-jq-json-provider-impl-jackson3</artifactId>
       <version>${jackson-jq.version}</version>
     </dependency>
+    <!-- Default extension modules inclusion that maximizes functionality inclusion and backward compatibility by keeping
+    safe in-memory execution -->
     <dependency>
       <groupId>net.thisptr.jackson.jq.v2</groupId>
       <artifactId>jackson-jq-ext-module-uuid</artifactId>
@@ -44,6 +46,16 @@
     <dependency>
       <groupId>net.thisptr.jackson.jq.v2</groupId>
       <artifactId>jackson-jq-ext-module-uri</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-ext-module-random</artifactId>
+      <version>${jackson-jq.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.thisptr.jackson.jq.v2</groupId>
+      <artifactId>jackson-jq-ext-module-joni</artifactId>
       <version>${jackson-jq.version}</version>
     </dependency>
   </dependencies>

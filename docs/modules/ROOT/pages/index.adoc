@@ -1,7 +1,9 @@
 = Quarkus - Jackson Jq
 :extension-status: preview
 
-Describe what the extension does here.
+https://stedolan.github.io/jq/[`jq`] is a very popular JSON processor.
+https://github.com/eiiches/jackson-jq[Jackson JQ] is an implementation of this processor in Java, and this extension
+integrates it in your Quarkus application.
 
 == Installation
 
@@ -15,6 +17,109 @@ In your `pom.xml` file, add:
     <artifactId>quarkus-jackson-jq</artifactId>
 </dependency>
 ----
+
+== Usage
+
+Inject the jackson-jq `Environment` bean in your services:
+
+[source,java]
+----
+@Inject
+Environment<JsonNode> environment;
+
+public List<JsonNode> parse(Document document) throws JsonQueryException {
+    final JsonQuery<JsonNode> query = environment.compile(document.expression);
+    List<JsonNode> out = new ArrayList<>();
+    query.apply(document.document, out::add);
+    return out;
+}
+----
+
+== Extension modules
+
+jackson-jq extension modules (`net.thisptr.jackson.jq.v2:jackson-jq-ext-module-*`) are managed by the extension.
+
+The `uuid`, `time`, `uri`, `random` and `joni` modules are included by default. The rest (`binary`, `debug`, `fs`,
+`gzip`, `http`, `os`, `re2` and `zstd`) are activated by adding the corresponding dependency to your project, e.g.:
+
+[source,xml]
+----
+<dependency>
+    <groupId>net.thisptr.jackson.jq.v2</groupId>
+    <artifactId>jackson-jq-ext-module-os</artifactId>
+    <version>${jackson-jq.version}</version>
+</dependency>
+----
+
+The `joni` and `re2` modules are alternative regular expression engines and cannot be active at the same time.
+To use `re2`, disable the bundled one with `quarkus.jackson.jq.modules.joni.enabled=false`.
+
+Each module is incorporated into the `Environment` with the strategy configured in
+`quarkus.jackson.jq.modules."<id>".strategy`:
+
+[cols="1,3,2"]
+|===
+|Strategy |Usage in the expressions |Extra properties
+
+|`register` (default)
+|The expression must `import` or `include` the module by its path, e.g. `import "jackson-jq/uuid" as uuid; uuid::uuid4`
+|`path` (optional), defaults to `jackson-jq/<id>`
+
+|`import`
+|The functions are available as `alias::function(...)`, e.g. `uriexamplealias::uriparse`
+|`alias` (mandatory), a plain identifier
+
+|`include`
+|The functions are available by their name, e.g. `random`
+|none
+|===
+
+For example:
+
+[source,properties]
+----
+quarkus.jackson.jq.modules.time.path=jackson-jq/time-example-path
+quarkus.jackson.jq.modules.uri.strategy=import
+quarkus.jackson.jq.modules.uri.alias=uriexamplealias
+quarkus.jackson.jq.modules.random.strategy=include
+----
+
+The regular expression functions (`test`, `match`, `capture`, `scan`, `splits`, `sub`, `gsub`...) are provided by the
+`joni` module. With the default strategy they must be referenced by the module path, e.g.
+`import "jackson-jq/joni" as joni; "aba" | [joni::splits("b")]`. Configure
+`quarkus.jackson.jq.modules.joni.strategy=include` to call them by their bare name.
+
+== Excluding functions
+
+[source,properties]
+----
+quarkus.jackson.jq.functions.excludes=now,min_by,@text,uuid3
+----
+
+* Functions are excluded by name, for every arity, e.g. `now` excludes `now/0` and any other `now/N`.
+* It applies to the built-in functions, to custom functions and to the functions that the modules implement in Java.
+* It does not apply to the functions that a module defines in jq source code, e.g. the regular expression functions
+of the `joni` module. Disable the module if you want to remove them.
+* A query invoking an excluded function fails with a `Function ... does not exist` error.
+
+== Custom functions
+
+Any class of your application that implements `net.thisptr.jackson.jq.v2.spi.Function` and is annotated with
+`@FunctionRegistration` is registered at build time. Repeat the annotation to register different arities.
+
+[source,java]
+----
+@FunctionRegistration(name = "myGreet", nargs = 1)
+@FunctionRegistration(name = "myGreet", nargs = 2)
+public class MyGreetFunction implements Function {
+    // ...
+}
+----
+
+* Only the classes of your application are scanned. Functions packaged in other libraries are not discovered.
+* The optional `version` attribute restricts the jq versions where the function is available. A bound that is not
+set is unbounded, `min` is inclusive and `max` is exclusive by default.
+* The custom functions are also subject to `quarkus.jackson.jq.functions.excludes`.
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
