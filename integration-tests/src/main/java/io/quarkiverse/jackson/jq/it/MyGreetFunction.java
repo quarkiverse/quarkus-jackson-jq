@@ -2,6 +2,7 @@ package io.quarkiverse.jackson.jq.it;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import net.thisptr.jackson.jq.v2.json.JsonProvider;
 import net.thisptr.jackson.jq.v2.spi.BindContext;
@@ -9,6 +10,8 @@ import net.thisptr.jackson.jq.v2.spi.Expression;
 import net.thisptr.jackson.jq.v2.spi.Function;
 import net.thisptr.jackson.jq.v2.spi.RuntimeContext;
 import net.thisptr.jackson.jq.v2.spi.annotations.FunctionRegistration;
+import net.thisptr.jackson.jq.v2.spi.annotations.VersionRangeSpec;
+import net.thisptr.jackson.jq.v2.spi.annotations.VersionSpec;
 import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
 import net.thisptr.jackson.jq.v2.spi.path.UntrackedPath;
 
@@ -20,7 +23,7 @@ import net.thisptr.jackson.jq.v2.spi.path.UntrackedPath;
  * treated as "EN".</li>
  * </ul>
  */
-@FunctionRegistration(name = "myGreet", nargs = 1)
+@FunctionRegistration(name = "myGreet", nargs = 1, version = @VersionRangeSpec(min = @VersionSpec(major = 1, minor = 2, patch = 3), minInclusive = false, max = @VersionSpec(major = 101, minor = 102, patch = 103), maxInclusive = true))
 @FunctionRegistration(name = "myGreet", nargs = 2)
 public class MyGreetFunction implements Function {
 
@@ -50,8 +53,7 @@ public class MyGreetFunction implements Function {
         return json.createString(greeting + ", " + text(json, name) + "!");
     }
 
-    // strings are used as-is, anything else is rendered as JSON
     private static <JsonNode> String text(JsonProvider<JsonNode> json, JsonNode value) {
-        return json.isString(value) ? json.getString(value) : json.format(value);
+        return json.isString(value) ? json.getString(value) : Objects.toString(value);
     }
 }

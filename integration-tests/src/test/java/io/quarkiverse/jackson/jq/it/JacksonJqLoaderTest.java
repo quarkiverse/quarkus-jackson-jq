@@ -3,6 +3,7 @@ package io.quarkiverse.jackson.jq.it;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class JacksonJqLoaderTest {
                 .statusCode(200)
                 .body("size()", greaterThan(0))
                 .body("$", hasItem("@json/0"))
-                .body("$", hasItem("@text/0"))
+                .body("$", not(hasItem("@text/0"))) // built-in function filtered from (BuiltinFunctionLoader / CoreJqLibrary)
                 .body("$", hasItem("_flatten/1"))
                 .body("$", hasItem("_modify/2"))
                 .body("$", hasItem("walk/1"))

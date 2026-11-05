@@ -27,10 +27,10 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Example of adding jackson-jq extension modules to the project -->
+    <!-- Example of adding additional jackson-jq extension modules to the project -->
     <dependency>
       <groupId>net.thisptr.jackson.jq.v2</groupId>
-      <artifactId>jackson-jq-regex-impl-joni</artifactId>
+      <artifactId>jackson-jq-ext-module-os</artifactId>
       <version>${jackson-jq.version}</version>
     </dependency>
 
