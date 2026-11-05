@@ -170,7 +170,7 @@ quarkus.jackson.jq.functions.excludes=now,min_by,@text,uuid3
 - A query that invokes an excluded function fails with a `Function ... does not exist` error.
 - It does **not** apply to the functions that a module defines in jq source code. For example, the regular expression
   functions provided by the `joni` module (`test`, `match`, `splits`, `sub`, `gsub`...) are not removed by excluding their names.
-  If you want to get rid of those, disable the module with `quarkus.jackson.jq.modules.joni.enabled=false`, or by exluding any the lower level primitives functions used internally to buidl them, e.g. `_match_impl` and `_sub_impl`.
+  If you want to get rid of those, disable the module with `quarkus.jackson.jq.modules.joni.enabled=false`, or by excluding any of the lower-level primitive functions used internally to build them, e.g. `_match_impl` and `_sub_impl`
 
 ## Adding Custom functions
 

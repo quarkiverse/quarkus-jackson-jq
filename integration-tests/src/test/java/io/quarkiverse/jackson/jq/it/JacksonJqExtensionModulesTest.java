@@ -301,10 +301,10 @@ class JacksonJqExtensionModulesTest {
     void useDependencyAddedModuleTest() {
         final ObjectMapper objectMapper = new ObjectMapper();
         final Document doc = new Document();
-        doc.setDocument(objectMapper.createObjectNode().stringNode("aba"));
+        doc.setDocument(objectMapper.createObjectNode().stringNode(""));
         // The module was incorporated to the project with an explicit maven dependency by not providing any strategy configuration.
         // No additional configuration is set in the application.properties so the default strategy = register is applied.
-        // And thus, the module is registered in the Environment with the default path "jackson-jq/joni". We must
+        // And thus, the module is registered in the Environment with the default path "jackson-jq/os". We must
         // either "import" or "include" in the expression for usage.
 
         String IMPORT = "import \"jackson-jq/os\" as os; ";

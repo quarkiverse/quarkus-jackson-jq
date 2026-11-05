@@ -290,7 +290,8 @@ class JacksonJqProcessor {
             List<JacksonJqFunctionBuildItem> functionBuildItems,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClassBuildItemBuildProducer) {
         moduleBuildItems.forEach(moduleItem -> reflectiveClassBuildItemBuildProducer
-                .produce(ReflectiveClassBuildItem.builder(moduleItem.getModuleDescriptor().className()).build()));
+                .produce(ReflectiveClassBuildItem
+                        .builder(generateFilteringClassName(moduleItem.getModuleDescriptor().className())).build()));
         functionBuildItems.forEach(functionItem -> reflectiveClassBuildItemBuildProducer
                 .produce(ReflectiveClassBuildItem.builder(functionItem.getFunctionDescriptor().className()).build()));
     }
