@@ -2,6 +2,9 @@ package io.quarkiverse.jackson.jq.it;
 
 import tools.jackson.databind.JsonNode;
 
+/**
+ * Request body of the test resource: a jq expression and the JSON document to evaluate it on.
+ */
 public class Document {
 
     private String expression;
