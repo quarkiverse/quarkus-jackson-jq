@@ -1,4 +1,4 @@
-package io.quarkiverse.jackson.jq;
+package io.quarkiverse.jackson.jq.internal;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

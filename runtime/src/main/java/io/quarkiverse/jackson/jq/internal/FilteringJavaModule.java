@@ -1,4 +1,4 @@
-package io.quarkiverse.jackson.jq;
+package io.quarkiverse.jackson.jq.internal;
 
 import java.util.HashMap;
 import java.util.Map;

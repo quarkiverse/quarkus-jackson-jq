@@ -6,7 +6,7 @@ import jakarta.inject.Singleton;
 
 import io.quarkiverse.jackson.jq.EnvironmentProducer;
 import io.quarkiverse.jackson.jq.EnvironmentSupplier;
-import io.quarkiverse.jackson.jq.JacksonJqEnvironmentCreator;
+import io.quarkiverse.jackson.jq.internal.JacksonJqEnvironmentCreator;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;

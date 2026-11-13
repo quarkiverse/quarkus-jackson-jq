@@ -1,4 +1,4 @@
-package io.quarkiverse.jackson.jq;
+package io.quarkiverse.jackson.jq.internal;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
