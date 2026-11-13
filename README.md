@@ -47,20 +47,55 @@ public class JacksonJqResource {
 
 ## Jackson Jq Extra Modules
 
-By default, this extension already includes the following extra modules, so there is no need to add them to your project:
+By default, this extension already includes the following extra modules, so there is no need to add them to your project.
+They were chosen to maximize the available functionality and keep backward compatibility, while keeping the execution
+safe and in-memory: modules that access the file system, the network or the operating system (e.g. `fs`, `http`,
+`os`) are **not** included.
 
-- `jackson-jq-ext-module-uuid`
-- `jackson-jq-ext-module-time`
-- `jackson-jq-ext-module-uri`
+| Dependency                      | Import path          | Provides                                              |
+|---------------------------------|----------------------|-------------------------------------------------------|
+| `jackson-jq-ext-module-uuid`    | `jackson-jq/uuid`    | `uuid3`, `uuid4` and `uuid5` functions.               |
+| `jackson-jq-ext-module-time`    | `jackson-jq/time`    | `strftime`, `strptime` and `timestamp` functions.     |
+| `jackson-jq-ext-module-uri`     | `jackson-jq/uri`     | `uriparse` and `uridecode` functions.                 |
+| `jackson-jq-ext-module-random`  | `jackson-jq/random`  | `random` function.                                    |
+| `jackson-jq-regex-impl-joni`    | none                 | Regular expression engine (Joni) used by the jq regular expression functions, such as `test`, `match`, `capture`, `scan`, `split`, `sub` and `gsub`. It requires no import. |
+
+The modules with an import path must be imported in the jq expression before using their functions, for example:
+
+```jq
+import "jackson-jq/uuid" as uuid; uuid::uuid4
+```
+
+Since these modules are included by default, any function of them can be removed with the
+[`excludes`](#excluding-functions) configuration property, for example to disable the non-deterministic ones
+(`uuid4`, `random`).
 
 You can find more information on additional modules in: [extra module](https://github.com/eiiches/jackson-jq/blob/develop/2.x/docs/modules/README.md).
 
 ## Configuration
 
-| Property                                | Default | Description                                                                     |
-|-----------------------------------------|---------|---------------------------------------------------------------------------------|
-| `quarkus.jackson.jq.functions.version`  | `1.8.2` | The supported jq version.                                                       |
-| `quarkus.jackson.jq.functions.excludes` |         | **Deprecated**, it has no effect anymore and will be removed in a future release. |
+| Property                                | Default | Description                                                                                                                  |
+|-----------------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------|
+| `quarkus.jackson.jq.functions.version`  | `1.8.2` | The supported jq version.                                                                                                    |
+| `quarkus.jackson.jq.functions.excludes` |         | Comma-separated list of function names to exclude from the jq environment. See [Excluding functions](#excluding-functions). |
+
+Both properties are fixed at build time.
+
+### Excluding functions
+
+Use `quarkus.jackson.jq.functions.excludes` to remove functions from the jq environment, for example to prevent
+expressions from calling `now` or from generating random values:
+
+```properties
+quarkus.jackson.jq.functions.excludes=now,@text,uuid3
+```
+
+Things to keep in mind:
+
+- Functions are excluded **by name, regardless of their arity**.
+- A query that calls an excluded function fails to compile with a `JsonQueryException`, e.g.
+  `Function now/0 does not exist`.
+- Other jq functions that are defined in terms of an excluded one can also stop working.
 
 ## Adding Custom functions
 

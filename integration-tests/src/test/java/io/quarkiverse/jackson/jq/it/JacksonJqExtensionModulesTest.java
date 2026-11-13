@@ -41,6 +41,28 @@ class JacksonJqExtensionModulesTest {
     }
 
     /**
+     * Example of invocation of an excluded function in the jackson-jq-ext-module-uuid extension module.
+     * The invocation must fail since the "uuid3" function was excluded, see application.properties.
+     */
+    @Test
+    void uuidModuleExcludedFunctionTest() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Document doc = new Document();
+        doc.setDocument(objectMapper.readTree("{}"));
+        // import the module by using the by default module path "jackson-jq/uuid".
+        String IMPORT = "import \"jackson-jq/uuid\" as uuid; ";
+        doc.setExpression(IMPORT + " \"example.com\" | uuid::uuid3(\"6ba7b810-9dad-11d1-80b4-00c04fd430c8\")");
+
+        // The invocation will fail with code 500 since the uuid3 function is excluded.
+        given().when()
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(doc))
+                .post("/jq/parse")
+                .then()
+                .statusCode(500);
+    }
+
+    /**
      * Example of jackson-jq-ext-module-time extension module usage.
      */
     @Test
@@ -123,5 +145,25 @@ class JacksonJqExtensionModulesTest {
         assertThat(result).element(2).isEqualTo("");
         assertThat(result).element(3).isEqualTo("a");
         assertThat(result).element(4).isEqualTo("a");
+    }
+
+    /**
+     * Example of invocation of an excluded built-in function.
+     * The invocation must fail since the "now" function was excluded, see application.properties.
+     */
+    @Test
+    void builtInExcludedFunctionTest() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Document doc = new Document();
+        doc.setDocument(objectMapper.readTree("{}"));
+        doc.setExpression("123 | now");
+
+        // The invocation will fail with code 500 since the now function is excluded.
+        given().when()
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(doc))
+                .post("/jq/parse")
+                .then()
+                .statusCode(500);
     }
 }
