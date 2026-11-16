@@ -36,6 +36,7 @@ import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Test resource that evaluates jq expressions with the {@link Environment} created by the extension, and lists the
@@ -54,6 +55,24 @@ public class ParserResource {
 
     @Inject
     ObjectMapper mapper;
+
+    /**
+     * Auxiliary endpoint to check if both environment injection alternatives work.
+     */
+    @Path("/check-environment")
+    @GET
+    public JsonNode checkEnvironmentInjection() {
+        ObjectNode result = mapper.createObjectNode();
+        List<JsonNode> environmentSupplierResult = environmentSupplier.get().compile("contains(\"b\")")
+                .apply(mapper.createObjectNode().stringNode("abc"));
+        List<JsonNode> environmentResult = environment.compile("contains(\"b\")")
+                .apply(mapper.createObjectNode().stringNode("abc"));
+
+        result.put("environmentSupplierResult",
+                environmentSupplierResult.isEmpty() ? null : environmentSupplierResult.getFirst().asBoolean());
+        result.put("environmentResult", environmentResult.isEmpty() ? null : environmentResult.getFirst().asBoolean());
+        return result;
+    }
 
     /**
      * @param document the jq expression and the JSON document to evaluate it on.

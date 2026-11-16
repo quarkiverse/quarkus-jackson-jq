@@ -1,6 +1,7 @@
 package io.quarkiverse.jackson.jq.it;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 
 @QuarkusTest
 class JacksonJqLoaderTest {
@@ -43,5 +45,23 @@ class JacksonJqLoaderTest {
                 .body("$", hasItem("delpaths/1"))
                 .body("$", hasItem("myGreet/1"))
                 .body("$", hasItem("myGreet/2"));
+    }
+
+    /**
+     * Ensures that the JacksonJQ environment works using any of the available injection alternatives.
+     */
+    @Test
+    public void ensureEnvironmentExecutionTest() {
+        JsonPath result = given().when()
+                .get("/jq/check-environment")
+                .then()
+                .statusCode(200)
+                .extract().jsonPath();
+        assertThat(result.getObject("environmentSupplierResult", Boolean.class))
+                .withFailMessage("EnvironmentSupplier invocation did not return the expected value")
+                .isTrue();
+        assertThat(result.getObject("environmentResult", Boolean.class))
+                .withFailMessage("Environment invocation did not return the expected value")
+                .isTrue();
     }
 }
