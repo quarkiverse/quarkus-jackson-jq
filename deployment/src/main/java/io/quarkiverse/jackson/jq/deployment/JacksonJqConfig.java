@@ -30,7 +30,13 @@ public interface JacksonJqConfig {
         Version version();
 
         /**
-         * List of functions to exclude
+         * Comma-separated list of function names to exclude from the jq environment.
+         * <p>
+         * Functions are excluded by name, regardless of their arity, so excluding {@code min_by} removes every
+         * {@code min_by} variant.
+         * <p>
+         * A query calling an excluded function fails to compile. Other jq functions defined in terms of an excluded
+         * one can also stop working.
          */
         Optional<List<String>> excludes();
     }

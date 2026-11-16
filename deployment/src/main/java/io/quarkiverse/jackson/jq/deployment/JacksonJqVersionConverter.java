@@ -5,6 +5,9 @@ import org.eclipse.microprofile.config.spi.Converter;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import net.thisptr.jackson.jq.v2.spi.version.Version;
 
+/**
+ * Converts the {@code quarkus.jackson.jq.functions.version} property value into a jq {@link Version}.
+ */
 @RegisterForReflection
 public class JacksonJqVersionConverter implements Converter<Version> {
     @Override
